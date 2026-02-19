@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 )
 
 /*
@@ -16,5 +17,16 @@ func main() {
 	bytes := flag.Bool("c", false, "count bytes")
 	chars := flag.Bool("m", false, "count characters")
 
-	fmt.Println(lines, bytes, chars)
+	flag.Parse()
+
+	files := flag.Args() // file names
+
+	if len(files) == 0 {
+		fmt.Println("File name is required!")
+		os.Exit(1)
+	}
+
+	// output := internal.stats
+
+	fmt.Println(*lines, *bytes, *chars)
 }
