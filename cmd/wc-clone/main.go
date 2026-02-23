@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/Xebec19/special-system/internal"
 )
 
 /*
@@ -26,7 +28,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// output := internal.stats
+	output := internal.Stats(*lines, *chars, *bytes, files)
 
-	fmt.Println(*lines, *bytes, *chars)
+	fmt.Println(output)
 }
