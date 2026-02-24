@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -24,6 +25,7 @@ func Stats(l, w, b bool, files []string) string {
 	}
 
 	for _, val := range files {
+		_, _, _, _ = stat(showLines, showChars, showBytes, val)
 		fmt.Fprintf(&filesStat, "%t %t %t %s\n", showLines, showChars, showBytes, val)
 	}
 
@@ -34,35 +36,38 @@ func Stats(l, w, b bool, files []string) string {
 	return filesStat.String()
 }
 
-func stat(showLines, showChars, showBytes bool, fileName string) (int, int, int, error) {
+// stat returns no of lines, no of chars and size of a file
+func stat(showLines, showChars, showBytes bool, fileName string) (uint, uint, uint, error) {
 
 	f, err := os.Open(fileName)
 	if err != nil {
-		logger.Log(fmt.Sprintf("error: file can not be opened %w", err))
-		return -1, -1, -1, err
+		logger.Log(fmt.Errorf("error: file can not be opened %w", err).Error())
+		return 0, 0, 0, err
 	}
 
 	defer f.Close()
 
 	buf := make([]byte, 4096) // 4kb buffer
+	var linesCount uint = 0
 
 	for {
 		n, err := f.Read(buf)
+		linesCount += uint(bytes.Count(buf[:n], []byte{'\n'}))
 		if err == io.EOF {
 			break
 		}
 
 		if err != nil {
 			logger.Log("error: failed to read file %s, %v", fileName, err)
-			return -1, -1, -1, err
+			return 0, 0, 0, err
 		}
 
 		process(buf[:n])
 	}
 
-	return 0, 0, 0, nil
+	return linesCount, 0, 0, nil
 }
 
 func process(data []byte) {
-	logger.Log("Read bytes:", data)
+	logger.Log("Read bytes:", string(data))
 }
