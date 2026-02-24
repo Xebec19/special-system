@@ -19,3 +19,7 @@ func init() {
 func Log(msg string, args ...interface{}) {
 	sloglog.Info(msg, "args", args)
 }
+
+func Error(msg string, args ...interface{}) {
+	sloglog.Error(msg, "args", args)
+}

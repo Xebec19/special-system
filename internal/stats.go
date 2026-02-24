@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
 	"io"
 	"os"
@@ -18,6 +18,7 @@ func Stats(l, w, b bool, files []string) string {
 	showChars := w
 	showBytes := b
 
+	totalLines, totalChars, totalBytes := 0, 0, 0
 	if !showLines && !showChars && !showBytes {
 		showLines = true
 		showChars = true
@@ -25,19 +26,35 @@ func Stats(l, w, b bool, files []string) string {
 	}
 
 	for _, val := range files {
-		_, _, _, _ = stat(showLines, showChars, showBytes, val)
-		fmt.Fprintf(&filesStat, "%t %t %t %s\n", showLines, showChars, showBytes, val)
+		// get lines, chars and size of given file
+		lines, chars, size, err := stat(showLines, showChars, showBytes, val)
+		if err != nil {
+			logger.Error("error: failed to read file stats", err)
+			fmt.Fprintln(&filesStat, "%w", err)
+		}
+
+		// sum total lines, chars and size
+		totalLines += lines
+		totalChars += chars
+		totalBytes += size
+
+		fmt.Fprintln(&filesStat, lines, chars, size, val)
 	}
 
 	if len(files) > 1 {
-		filesStat.WriteString("total\n")
+		fmt.Fprintln(&filesStat, totalLines, totalChars, totalBytes, "total")
 	}
 
 	return filesStat.String()
 }
 
 // stat returns no of lines, no of chars and size of a file
-func stat(showLines, showChars, showBytes bool, fileName string) (uint, uint, uint, error) {
+func stat(showLines, showChars, showBytes bool, fileName string) (int, int, int, error) {
+
+	// dont do any processing if no param is required
+	if !showLines && !showChars && !showBytes {
+		return 0, 0, 0, nil
+	}
 
 	f, err := os.Open(fileName)
 	if err != nil {
@@ -47,27 +64,39 @@ func stat(showLines, showChars, showBytes bool, fileName string) (uint, uint, ui
 
 	defer f.Close()
 
-	buf := make([]byte, 4096) // 4kb buffer
-	var linesCount uint = 0
+	linesCount, charCount, size := 0, 0, 0
+
+	// get file size
+	info, err := f.Stat()
+	if err != nil {
+		logger.Log("error: failed to get file stats ", err)
+	} else if showBytes {
+		size = int(info.Size()) // file size
+	}
+
+	reader := bufio.NewReader(f)
 
 	for {
-		n, err := f.Read(buf)
-		linesCount += uint(bytes.Count(buf[:n], []byte{'\n'}))
+		// read each rune
+		r, _, err := reader.ReadRune()
 		if err == io.EOF {
 			break
 		}
 
 		if err != nil {
-			logger.Log("error: failed to read file %s, %v", fileName, err)
 			return 0, 0, 0, err
 		}
 
-		process(buf[:n])
+		// count chars
+		if showChars {
+			charCount++
+		}
+
+		// count newlines
+		if r == '\n' && showLines {
+			linesCount++
+		}
 	}
 
-	return linesCount, 0, 0, nil
-}
-
-func process(data []byte) {
-	logger.Log("Read bytes:", string(data))
+	return linesCount, charCount, size, nil
 }
