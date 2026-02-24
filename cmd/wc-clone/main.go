@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Xebec19/special-system/internal"
+	"github.com/Xebec19/special-system/pkg/logger"
 )
 
 /*
@@ -30,5 +31,5 @@ func main() {
 
 	output := internal.Stats(*lines, *chars, *bytes, files)
 
-	fmt.Println(output)
+	logger.Log(output)
 }

@@ -5,11 +5,17 @@ import (
 	"os"
 )
 
-func New() *slog.Logger {
+var sloglog *slog.Logger
 
+func init() {
 	h := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelInfo,
 	})
 
-	return slog.New(h)
+	log := slog.New(h)
+	sloglog = log
+}
+
+func Log(msg string, args ...interface{}) {
+	sloglog.Info(msg, "args", args)
 }
