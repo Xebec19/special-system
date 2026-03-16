@@ -83,6 +83,11 @@ func stat(showLines, showChars, showBytes bool, fileName string) (int, int, int,
 			break
 		}
 
+		// if file has atleast 1 char, it should have 1 lines as well
+		if linesCount == 0 {
+			linesCount++
+		}
+
 		if err != nil {
 			return 0, 0, 0, err
 		}
