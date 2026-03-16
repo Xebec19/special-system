@@ -1,3 +1,5 @@
+.PHONY: help test build install
+
 BINARY=wc-clone
 VERSION=$(shell git describe --tags --abbrev=0 2>/dev/null || echo "dev")
 COMMIT=$(shell git rev-parse --short HEAD)
@@ -24,5 +26,3 @@ build:
 
 install:
 	go install ./cmd/$(BINARY)
-
-.PHONY: help test
