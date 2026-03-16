@@ -16,9 +16,17 @@ implement -c, -m and -l first
 func main() {
 	// Raw args: os.Args[0] is program name
 
-	fmt.Println("version:", version.Version)
-	fmt.Println("commit:", version.Commit)
-	fmt.Println("built:", version.BuildDate)
+	showVersion := flag.Bool("version", false, "print version")
+	flag.Parse()
+
+	if *showVersion {
+		fmt.Printf("version: %s\ncommit: %s\nbuilt: %s\n",
+			version.Version,
+			version.Commit,
+			version.BuildDate,
+		)
+		return
+	}
 
 	lines := flag.Bool("l", false, "count lines")
 	bytes := flag.Bool("c", false, "count bytes")
