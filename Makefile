@@ -23,6 +23,6 @@ build:
 	-o bin/$(BINARY) ./cmd/$(BINARY)
 
 install:
-	build && go install ./bin/wc-clone
+	go install ./cmd/$(BINARY)
 
 .PHONY: help test
