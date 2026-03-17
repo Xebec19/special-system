@@ -17,6 +17,10 @@ func main() {
 	// Raw args: os.Args[0] is program name
 
 	showVersion := flag.Bool("version", false, "print version")
+	lines := flag.Bool("l", false, "count lines")
+	bytes := flag.Bool("c", false, "count bytes")
+	chars := flag.Bool("m", false, "count characters")
+
 	flag.Parse()
 
 	if *showVersion {
@@ -27,12 +31,6 @@ func main() {
 		)
 		return
 	}
-
-	lines := flag.Bool("l", false, "count lines")
-	bytes := flag.Bool("c", false, "count bytes")
-	chars := flag.Bool("m", false, "count characters")
-
-	flag.Parse()
 
 	files := flag.Args() // file names
 
