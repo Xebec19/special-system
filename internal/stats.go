@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/Xebec19/special-system/pkg/logger"
@@ -38,7 +39,23 @@ func Stats(l, w, b bool, files []string) string {
 		totalChars += chars
 		totalBytes += size
 
-		fmt.Fprintln(&filesStat, lines, chars, size, val)
+		if showLines {
+			filesStat.WriteString(strconv.FormatInt(int64(lines), 10))
+			filesStat.WriteString(" ")
+		}
+
+		if showChars {
+			filesStat.WriteString(strconv.FormatInt(int64(chars), 10))
+			filesStat.WriteString(" ")
+		}
+
+		if showBytes {
+			filesStat.WriteString(strconv.FormatInt(int64(size), 10))
+			filesStat.WriteString(" ")
+		}
+
+		filesStat.WriteString(val)
+		filesStat.WriteString("\n")
 	}
 
 	if len(files) > 1 {
