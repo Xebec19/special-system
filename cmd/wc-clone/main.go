@@ -20,6 +20,7 @@ func main() {
 	lines := flag.Bool("l", false, "count lines")
 	bytes := flag.Bool("c", false, "count bytes")
 	chars := flag.Bool("m", false, "count characters")
+	words := flag.Bool("w", false, "count words")
 
 	flag.Parse()
 
@@ -39,7 +40,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	output := internal.Stats(*lines, *chars, *bytes, files)
+	output := internal.Stats(*lines, *chars, *words, *bytes, files)
 
 	fmt.Print(output)
 }
