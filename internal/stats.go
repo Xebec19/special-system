@@ -24,7 +24,7 @@ func Stats(l, m, w, b bool, files []string) string {
 	totalLines, totalChars, totalBytes := 0, 0, 0
 	if !showLines && !showChars && !showBytes && !showWords {
 		showLines = true
-		showChars = true
+		showWords = true
 		showBytes = true
 	}
 
@@ -51,13 +51,13 @@ func Stats(l, m, w, b bool, files []string) string {
 			filesStat.WriteString(" ")
 		}
 
-		if showBytes {
-			filesStat.WriteString(strconv.FormatInt(int64(size), 10))
+		if showWords {
+			filesStat.WriteString(strconv.FormatInt(int64(words), 10))
 			filesStat.WriteString(" ")
 		}
 
-		if showWords {
-			filesStat.WriteString(strconv.FormatInt(int64(words), 10))
+		if showBytes {
+			filesStat.WriteString(strconv.FormatInt(int64(size), 10))
 			filesStat.WriteString(" ")
 		}
 
